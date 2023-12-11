@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats-demo-server
+spec:
+  replicas: 3  # Number of desired replicas
+  selector:
+    matchLabels:
+      app: stats-demo-server
+  template:
+    metadata:
+      labels:
+        app: stats-demo-server
+    spec:
+      containers:
+        - name: stats-demo-server
+          image: stats-demo-server:latest  # Replace with your actual Docker image
+          ports:
+            - containerPort: 3001  # Port your Express server is listening on
