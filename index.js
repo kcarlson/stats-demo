@@ -28,6 +28,23 @@ app.use((req, res, next) => {
 app.get("/stats-demo-server/v1", (req, res) => {
   res.json(statsAdapter.getStats());
 });
+// Handle post with json body
+app.post("/stats-demo-server/v1", (req, res) => {
+  req.on("data", (data) => {
+    const exists = statsAdapter.addStats(JSON.parse(data)) === false;
+    res.statusCode = exists ? 409 : 200;
+  });
+  // Wait until the end of the request to send the response
+  req.on("end", () => {
+    // Only send body if status code is 200
+    if (res.statusCode === 200) {
+      res.json(statsAdapter.getStats());
+      return;
+    }
+
+    res.end();
+  });
+});
 
 const wsServer = new ws.Server({ noServer: true });
 wsServer.on("connection", (socket) => {
@@ -39,13 +56,17 @@ const server = app.listen(port, host, () => {
 });
 
 server.on("upgrade", (request, socket, head) => {
-  console.log("upgrade");
   wsServer.handleUpgrade(request, socket, head, (socket) => {
-    console.log("handleUpgrade");
     wsServer.emit("connection", socket, request);
-    setInterval(() => {
-      socket.send("Hello from the server!");
-    }, 1000);
+    console.log("Websocket connection established");
+    statsAdapter.emitter.on("stats", (stats) => {
+      socket.send(JSON.stringify(stats));
+    });
+  });
+  // Log close
+  socket.on("close", () => {
+    console.log("Websocket connection closed");
+    statsAdapter.emitter.removeAllListeners("stats");
   });
 });
 
