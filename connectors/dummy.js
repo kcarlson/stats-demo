@@ -1,5 +1,6 @@
 const { EventEmitter } = require("events");
 const MAX_STATS_ENTRIES = 100;
+const UPDATE_INTERVAL = 1000;
 const randomValue0To1000 = () => Math.floor(Math.random() * 1000);
 
 // Just some initial dummy stats to see what is going on
@@ -38,25 +39,27 @@ module.exports = () => {
   // Use basic interval to emit stats
   setInterval(() => {
     emitter.emit("stats", getStats());
-  }, 1000);
+  }, UPDATE_INTERVAL);
   return {
     emitter,
     getStats,
     addStats: ({ stats }) => {
       if (currentStats.length >= MAX_STATS_ENTRIES) {
-        throw new Error(`Max stats entries reached (${MAX_STATS_ENTRIES})`);
+        console.error(`Max stats entries reached (${MAX_STATS_ENTRIES})`);
+        return false;
       }
       // Return false if any stat already exists
       if (currentStats.some((i) => stats.some((j) => i.name === j.name))) {
         return false;
       }
-      stats.forEach((i) =>
-        currentStats.push({
-          // Default value to now
-          value: Date.now(),
-          ...i,
-        })
-      );
+      stats
+        // Filter out anything without a name
+        .filter((i) => !!i.name)
+        .forEach((i) =>
+          currentStats.push({
+            name: i.name,
+          })
+        );
       // Emit new stats with flag
       emitter.emit("stats", {
         ...getStats(),
