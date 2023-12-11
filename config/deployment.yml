@@ -2,18 +2,44 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stats-demo-server
+  labels:
+    app: stats-demo-server
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: stats-demo-server
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
   template:
     metadata:
       labels:
         app: stats-demo-server
     spec:
       containers:
-        - name: stats-demo-server
-          image: stats-demo-server
-          ports:
-            - containerPort: 3001 
+      - name: stats-demo-server
+        image: <IMAGE>
+        ports:
+        - containerPort: 3001
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: stats-demo-server-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 3001
+      targetPort: 3001
+  selector:
+    app: stats-demo-server
