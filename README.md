@@ -1,2 +1,2 @@
-# stats-demo
-Demo of stats web application
+# stats-demo-server
+Demo of stats web application backend
