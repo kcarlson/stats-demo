@@ -54,6 +54,11 @@ module.exports = () => {
           ...i,
         })
       );
+      // Emit new stats with flag
+      emitter.emit("stats", {
+        ...getStats(),
+        updated: true,
+      });
       return true;
     },
   };
