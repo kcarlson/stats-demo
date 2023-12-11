@@ -1,0 +1,27 @@
+{
+  "name": "stats-demo-server",
+  "version": "1.0.0",
+  "description": "Demo of stats web application backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kcarlson/stats-demo-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kcarlson/stats-demo-server/issues"
+  },
+  "homepage": "https://github.com/kcarlson/stats-demo-server#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^8.15.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
