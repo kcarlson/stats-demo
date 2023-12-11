@@ -2,9 +2,9 @@ const fs = require("fs");
 const express = require("express");
 const ws = require("ws");
 
-// Get host and port from environment variables or default to localhost:3001
+// Get host and port from environment variables or default to 0.0.0.0:3001
 const port = process.env.PORT || 3001;
-const host = process.env.HOST || "localhost";
+const host = process.env.HOST || "0.0.0.0";
 // Get stats connector from environment variable or default to dummy connector
 const connector = process.env.STATS_CONNECTOR || "dummy";
 
@@ -71,3 +71,14 @@ server.on("upgrade", (request, socket, head) => {
 });
 
 console.log(`Using ${connector} stats adapter.`);
+
+// Capture sigterm or sigint for graceful shutdown from docker
+const closeServer = () => {
+  console.log("Closing HTTP server");
+  server.close(() => {
+    console.log("HTTP server closed");
+    process.exit(0);
+  });
+};
+process.on("SIGTERM", closeServer);
+process.on("SIGINT", closeServer);
