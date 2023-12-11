@@ -31,6 +31,14 @@ jobs:
     - name: Save DigitalOcean kubeconfig with short-lived credentials
       run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 k8s-1-28-2-do-0-ams3-1702299982965
 
+    # If you haven't already integrated with your registry and only want workloads in a particular namespace to be able to pull 
+    # from your registry, uncomment the next two commands.
+    - name: Upload credentials of your registry to your DigitalOcean Kubernetes cluster
+      run: doctl registry kubernetes-manifest | kubectl apply -f -
+      
+    - name: Reference the secret you just uploaded as an imagePullSecrets
+      run: "kubectl patch serviceaccount default -p '{\"imagePullSecrets\": [{\"name\": \"registry-<your-registry-name>`\"}]}'"
+
     - name: Deploy to DigitalOcean Kubernetes
       run: kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
 
