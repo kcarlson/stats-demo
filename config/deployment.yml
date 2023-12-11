@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: stats-demo-server
 spec:
-  replicas: 3  # Number of desired replicas
+  replicas: 1
   selector:
     matchLabels:
       app: stats-demo-server
@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: stats-demo-server
-          image: stats-demo-server:latest  # Replace with your actual Docker image
+          image: stats-demo-server
           ports:
-            - containerPort: 3001  # Port your Express server is listening on
+            - containerPort: 3001 
