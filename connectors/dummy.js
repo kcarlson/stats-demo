@@ -1,5 +1,5 @@
 const { EventEmitter } = require("events");
-
+const MAX_STATS_ENTRIES = 100;
 const randomValue0To1000 = () => Math.floor(Math.random() * 1000);
 
 // Just some initial dummy stats to see what is going on
@@ -43,6 +43,9 @@ module.exports = () => {
     emitter,
     getStats,
     addStats: ({ stats }) => {
+      if (currentStats.length >= MAX_STATS_ENTRIES) {
+        throw new Error(`Max stats entries reached (${MAX_STATS_ENTRIES})`);
+      }
       // Return false if any stat already exists
       if (currentStats.some((i) => stats.some((j) => i.name === j.name))) {
         return false;
