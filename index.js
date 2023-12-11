@@ -45,6 +45,12 @@ app.post("/stats-demo-server/v1", (req, res) => {
     res.end();
   });
 });
+app.delete("/stats-demo-server/v1/:name", (req, res) => {
+  const exists =
+    statsAdapter.removeStats({ stats: [{ name: req.params.name }] }) === false;
+  res.statusCode = exists ? 404 : 200;
+  res.end();
+});
 
 const wsServer = new ws.Server({ noServer: true });
 wsServer.on("connection", (socket) => {

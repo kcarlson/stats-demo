@@ -61,5 +61,21 @@ module.exports = () => {
       });
       return true;
     },
+    removeStats: ({ stats }) => {
+      // Return false if any stat does not exist
+      if (stats.some((i) => !currentStats.some((j) => i.name === j.name))) {
+        return false;
+      }
+      stats.forEach((i) => {
+        const index = currentStats.findIndex((j) => i.name === j.name);
+        currentStats.splice(index, 1);
+      });
+      // Emit new stats with flag
+      emitter.emit("stats", {
+        ...getStats(),
+        updated: true,
+      });
+      return true;
+    },
   };
 };
