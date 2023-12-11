@@ -77,7 +77,11 @@ const closeServer = () => {
   console.log("Closing HTTP server");
   server.close(() => {
     console.log("HTTP server closed");
-    process.exit(0);
+    console.log("Closing WS server");
+    wsServer.close(() => {
+      console.log("WS server closed");
+      process.exit(0);
+    });
   });
 };
 process.on("SIGTERM", closeServer);

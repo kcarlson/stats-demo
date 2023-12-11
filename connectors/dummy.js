@@ -1,26 +1,36 @@
 const { EventEmitter } = require("events");
 
+const randomValue0To1000 = () => Math.floor(Math.random() * 1000);
+
+// Just some initial dummy stats to see what is going on
 const currentStats = [
   {
     name: "dummy-01",
-    // Just get current timestamp
-    value: Date.now(),
+    value: undefined,
+    min: undefined,
+    max: undefined,
   },
   {
     name: "dummy-02",
-    // Just get current timestamp
-    value: Date.now() - 3,
+    value: undefined,
+    min: undefined,
+    max: undefined,
   },
 ];
 
-const getStats = () => {
-  return {
-    stats: currentStats.map((i) => ({
+const getStats = () => ({
+  stats: currentStats.map((i) => {
+    const value = randomValue0To1000();
+    // Upate ptrs
+    i.min = Math.min(i.min ?? value, value);
+    i.max = Math.max(i.max ?? value, value);
+
+    return {
       ...i,
-      value: Date.now() - (i.value ?? 0),
-    })),
-  };
-};
+      value,
+    };
+  }),
+});
 module.exports = () => {
   console.log("dummy connector loaded");
   // Create an event emitter to emit stats
